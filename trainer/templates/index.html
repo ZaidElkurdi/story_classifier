@@ -1,0 +1,126 @@
+{% load jstemplate %}
+
+<html>
+    <head>
+        <script src="/static/libs/mustache.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+        <script type="text/javascript">
+            Mustache.tags = ['[[', ']]'];
+
+
+            function get_data(){
+                $.ajaxSetup({ cache: false });
+                $.ajax({
+                    dataType: "json",
+                    url: "/training_data",
+                    data: {},
+                    envelope: {},
+
+                    success: function(res) {
+
+                        // Have all available data
+                        if ( res.status === 1 ) {
+                            var template = $('#categories-template').html();
+                            var html = Mustache.to_html(template,res.data);
+                            $('#dynamic-area').html(html);
+
+                        }
+
+                        else {
+                            var template = $('#no-results-template').html();
+                            var html = Mustache.to_html(template);
+                            $('#dynamic-area').html(html);
+                        }
+
+                    } // End of ajax
+                });
+
+            }
+
+        </script>
+
+        <title>Project X</title>
+
+        <style>
+            div.categories-table {
+                float: none;
+                padding-top: 24px;
+                padding-left: 20px;
+                margin-left: 20px;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+
+    <script id="categories-template" type="text/template">
+        <div style = "padding: 0 0 0 0; width: 100%; margin: 10px;">
+        <h2>Test Watson!</h2>
+        </div>
+
+        {% block content %}
+
+        <div class="classify_request_form">
+            <form method='POST' action='/submit_query'>
+                {% csrf_token %}
+                {{ query_form.as_p }}
+                <input type='submit' value='submit' name='submitQuery'>
+            </form>
+        </div>
+
+        <p>Response: {{ classifier_result|linebreaks }}</p>
+
+        <div style = "padding: 0 0 0 0; width: 100%; margin: 10px;">
+        <h2>Train Watson!</h2>
+        </div>
+
+        <div class="add_datum_form">
+            <form method='POST' action='/add_datum'>
+                {% csrf_token %}
+                {{ add_datum_form.as_p }}
+                <input type='submit' value='submit' name='submitData'>
+            </form>
+        </div>
+
+        <div class="categories-table">
+
+            <table border="1" style="width: 70%">
+              <tr>
+                <th>Text</th>
+                <th>Categories</th>
+              </tr>
+
+              [[#logged_data]]
+              <tr id="[[id]]">
+                <td>[[text]]</td> 
+                <td>[[categories]]</td> 
+              </tr>
+              [[/logged_data]]
+
+
+            </table>
+        </div>
+
+        {% endblock %}
+        </script>
+    
+         <div id='dynamic-area' class='dynamic-area'></div>
+
+    </body>
+
+
+    <script>
+        $(document).ready(function() {
+            var path = document.location.pathname;
+
+            if(path.match('/')) {
+                get_data();
+            }
+
+        });
+
+    </script>
+
+</html>

@@ -1,0 +1,11 @@
+applications:
+- services:
+  - Natural Language Classifier-20
+  disk_quota: 1024M
+  host: description-classifier
+  name: Description Classifier
+  path: .
+  domain: mybluemix.net
+  instances: 1
+  memory: 128M
+  command: sh run.sh

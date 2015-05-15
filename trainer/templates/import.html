@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Project X</title>
+		<style>
+			div.import_form {
+				width:60%; 
+				display: inline-block; 
+				text-align: left; 
+				background: #ffffff; 
+				padding-left: 10px; 
+				padding-top: 20px;
+			}
+		</style>
+
+	</head>
+	<body>
+		{% block content %}
+
+		<div class="import_form"> 
+			<form method='POST' action='/import_json_data'>
+                {% csrf_token %}
+                {{ import_form.as_p }}
+                <input type='submit' value='submit' name='submitJSON'>
+            </form>
+		</div>
+		{% endblock %}
+	</body>
+</html>
